@@ -84,3 +84,15 @@ Add PersistentVolumes with the template in yaml-collection/pv-data.yaml
 ```
 KUBECONFIG=admin.conf kubectl apply -f yaml-collection/pv-data.yaml
 ```
+
+Check if PersistentVolumes are available :
+```
+$ KUBECONFIG=admin.conf kubectl get pv
+NAME            CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM   STORAGECLASS   REASON   AGE
+data1-storage   10Gi       RWO            Delete           Available           slow                    10s
+data2-storage   10Gi       RWO            Delete           Available           slow                    10s
+data3-storage   10Gi       RWO            Delete           Available           slow                    10s
+data4-storage   10Gi       RWO            Delete           Available           slow                    10s
+data5-storage   10Gi       RWO            Delete           Available           slow                    10s
+data6-storage   10Gi       RWO            Delete           Available           slow                    10s
+```
