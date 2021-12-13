@@ -1,6 +1,5 @@
 Vagrant.configure("2") do |config|
   config.vm.box = "centos/7"
-  #config.vm.provision "shell", path: "k8s_setup.sh"
   config.vm.synced_folder ".", "/vagrant", type: "nfs"
 
   config.vm.define "k1" do |k1|

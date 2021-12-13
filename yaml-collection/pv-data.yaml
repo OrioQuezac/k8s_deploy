@@ -1,0 +1,155 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: data1-storage
+  namespace: postgres-operator
+spec:
+  capacity:
+    storage: 10Gi
+  volumeMode: Filesystem # Mount volume into Pod as a directory.
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: slow
+  local:
+    path: /mnt/data # Path to the directory this PV refers to.
+  nodeAffinity: # nodeAffinity is required when using local volumes.
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - k1
+          - k2
+          - k3
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: data2-storage
+  namespace: postgres-operator
+spec:
+  capacity:
+    storage: 10Gi
+  volumeMode: Filesystem # Mount volume into Pod as a directory.
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: slow
+  local:
+    path: /mnt/data # Path to the directory this PV refers to.
+  nodeAffinity: # nodeAffinity is required when using local volumes.
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - k1
+          - k2
+          - k3
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: data3-storage
+  namespace: postgres-operator
+spec:
+  capacity:
+    storage: 10Gi
+  volumeMode: Filesystem # Mount volume into Pod as a directory.
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: slow
+  local:
+    path: /mnt/data # Path to the directory this PV refers to.
+  nodeAffinity: # nodeAffinity is required when using local volumes.
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - k1
+          - k2
+          - k3
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: data4-storage
+  namespace: postgres-operator
+spec:
+  capacity:
+    storage: 10Gi
+  volumeMode: Filesystem # Mount volume into Pod as a directory.
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: slow
+  local:
+    path: /mnt/data # Path to the directory this PV refers to.
+  nodeAffinity: # nodeAffinity is required when using local volumes.
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - k1
+          - k2
+          - k3
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: data5-storage
+  namespace: postgres-operator
+spec:
+  capacity:
+    storage: 10Gi
+  volumeMode: Filesystem # Mount volume into Pod as a directory.
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: slow
+  local:
+    path: /mnt/data # Path to the directory this PV refers to.
+  nodeAffinity: # nodeAffinity is required when using local volumes.
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - k1
+          - k2
+          - k3
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: data6-storage
+  namespace: postgres-operator
+spec:
+  capacity:
+    storage: 10Gi
+  volumeMode: Filesystem # Mount volume into Pod as a directory.
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: slow
+  local:
+    path: /mnt/data # Path to the directory this PV refers to.
+  nodeAffinity: # nodeAffinity is required when using local volumes.
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - k1
+          - k2
+          - k3
