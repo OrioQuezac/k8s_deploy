@@ -12,7 +12,7 @@ spec:
   persistentVolumeReclaimPolicy: Delete
   storageClassName: slow
   local:
-    path: /mnt/data # Path to the directory this PV refers to.
+    path: /mnt/data1 # Path to the directory this PV refers to.
   nodeAffinity: # nodeAffinity is required when using local volumes.
     required:
       nodeSelectorTerms:
@@ -38,7 +38,7 @@ spec:
   persistentVolumeReclaimPolicy: Delete
   storageClassName: slow
   local:
-    path: /mnt/data # Path to the directory this PV refers to.
+    path: /mnt/data2 # Path to the directory this PV refers to.
   nodeAffinity: # nodeAffinity is required when using local volumes.
     required:
       nodeSelectorTerms:
@@ -64,7 +64,7 @@ spec:
   persistentVolumeReclaimPolicy: Delete
   storageClassName: slow
   local:
-    path: /mnt/data # Path to the directory this PV refers to.
+    path: /mnt/data3 # Path to the directory this PV refers to.
   nodeAffinity: # nodeAffinity is required when using local volumes.
     required:
       nodeSelectorTerms:
@@ -90,7 +90,7 @@ spec:
   persistentVolumeReclaimPolicy: Delete
   storageClassName: slow
   local:
-    path: /mnt/data # Path to the directory this PV refers to.
+    path: /mnt/data4 # Path to the directory this PV refers to.
   nodeAffinity: # nodeAffinity is required when using local volumes.
     required:
       nodeSelectorTerms:
@@ -116,7 +116,7 @@ spec:
   persistentVolumeReclaimPolicy: Delete
   storageClassName: slow
   local:
-    path: /mnt/data # Path to the directory this PV refers to.
+    path: /mnt/data5 # Path to the directory this PV refers to.
   nodeAffinity: # nodeAffinity is required when using local volumes.
     required:
       nodeSelectorTerms:
@@ -142,7 +142,7 @@ spec:
   persistentVolumeReclaimPolicy: Delete
   storageClassName: slow
   local:
-    path: /mnt/data # Path to the directory this PV refers to.
+    path: /mnt/data6 # Path to the directory this PV refers to.
   nodeAffinity: # nodeAffinity is required when using local volumes.
     required:
       nodeSelectorTerms:

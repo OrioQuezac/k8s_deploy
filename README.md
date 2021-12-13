@@ -75,9 +75,9 @@ Apply a StorageClass with yaml-collection/sc-slow.yaml :
 $ KUBECONFIG=admin.conf kubectl apply -f yaml-collection/sc-slow.yaml
 ```
 
-Create a directory for PersistentVolumes on each node :
+Create directories for PersistentVolumes on each node :
 ```
-$ for i in {1..3};do vagrant ssh -c 'sudo mkdir /mnt/data' k$i; done
+$ for i in {1..3};do vagrant ssh -c 'sudo mkdir /mnt/data{1..6}' k$i; done
 ```
 
 Add PersistentVolumes with the template in yaml-collection/pv-data.yaml
