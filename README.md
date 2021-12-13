@@ -29,4 +29,42 @@ cd k8s_deploy
 vagrant up
 ```
 
+Check all created pods (you will need kubectl on your host):
+```
+$ KUBECONFIG=admin.conf kubectl get pods --all-namespaces
+NAMESPACE     NAME                         READY   STATUS    RESTARTS   AGE
+kube-system   coredns-64897985d-kkk4b      1/1     Running   0          10m
+kube-system   coredns-64897985d-rz77s      1/1     Running   0          10m
+kube-system   etcd-k1                      1/1     Running   0          10m
+kube-system   kube-apiserver-k1            1/1     Running   0          10m
+kube-system   kube-controller-manager-k1   1/1     Running   0          10m
+kube-system   kube-flannel-ds-27ql7        1/1     Running   0          10m
+kube-system   kube-flannel-ds-b9zgf        1/1     Running   0          10m
+kube-system   kube-flannel-ds-znqmz        1/1     Running   0          10m
+kube-system   kube-proxy-jqsk7             1/1     Running   0          10m
+kube-system   kube-proxy-mml2p             1/1     Running   0          10m
+kube-system   kube-proxy-rvmq2             1/1     Running   0          10m
+kube-system   kube-scheduler-k1            1/1     Running   0          10m
+```
+
+or, connect to k1 :
+```
+$ vagrant ssh k1
+[vagrant@k1 ~]$ sudo KUBECONFIG=/etc/kubernetes/admin.conf kubectl get pods --all-namespaces
+NAMESPACE     NAME                         READY   STATUS    RESTARTS   AGE
+kube-system   coredns-64897985d-kkk4b      1/1     Running   0          13m
+kube-system   coredns-64897985d-rz77s      1/1     Running   0          13m
+kube-system   etcd-k1                      1/1     Running   0          13m
+kube-system   kube-apiserver-k1            1/1     Running   0          13m
+kube-system   kube-controller-manager-k1   1/1     Running   0          13m
+kube-system   kube-flannel-ds-27ql7        1/1     Running   0          13m
+kube-system   kube-flannel-ds-b9zgf        1/1     Running   0          13m
+kube-system   kube-flannel-ds-znqmz        1/1     Running   0          13m
+kube-system   kube-proxy-jqsk7             1/1     Running   0          13m
+kube-system   kube-proxy-mml2p             1/1     Running   0          13m
+kube-system   kube-proxy-rvmq2             1/1     Running   0          13m
+kube-system   kube-scheduler-k1            1/1     Running   0          13m
+```
+
+
 Enjoy !
