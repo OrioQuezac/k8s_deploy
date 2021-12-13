@@ -115,3 +115,8 @@ $ vagrant ssh -c "ip a | grep -A 3 eth0:" k1
 ```
 
 Connect to Dashboard with `https://<ip-k1>:<exposed-port>`
+
+Get token authentication :
+```
+kubectl -n kubernetes-dashboard get secret $(kubectl -n kubernetes-dashboard get sa/admin-user -o jsonpath="{.secrets[0].name}") -o go-template="{{.data.token | base64decode}}"
+```
