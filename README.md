@@ -66,5 +66,21 @@ kube-system   kube-proxy-rvmq2             1/1     Running   0          13m
 kube-system   kube-scheduler-k1            1/1     Running   0          13m
 ```
 
+**Enjoy !**
 
-Enjoy !
+## Add Storage
+
+Apply a StorageClass with yaml-collection/sc-slow.yaml :
+```
+KUBECONFIG=admin.conf kubectl apply -f yaml-collection/sc-slow.yaml
+```
+
+Create a directory for PersistentVolumes on each node :
+```
+$ for i in {1..3};do vagrant ssh -c 'sudo mkdir /mnt/data' k$i; done
+```
+
+Add PersistentVolumes with the template in yaml-collection/pv-data.yaml
+```
+KUBECONFIG=admin.conf kubectl apply -f yaml-collection/pv-data.yaml
+```
