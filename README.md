@@ -106,7 +106,7 @@ KUBECONFIG=admin.conf kubectl apply -k yaml-collection/k8s_dashboard
 
 You can expose port's pod with :
 ```
-kubectl expose pod $(kubectl get pod -n kubernetes-dashboard --no-headers -o custom-columns=":metadata.name" | grep kubernetes-dashboard) -n kubernetes-dashboard --type=NodePort --name=kubernetes-ui
+KUBECONFIG=admin.conf kubectl expose pod $(kubectl get pod -n kubernetes-dashboard --no-headers -o custom-columns=":metadata.name" | grep kubernetes-dashboard) -n kubernetes-dashboard --type=NodePort --name=kubernetes-ui
 ```
 
 Get `k1` ip :
@@ -114,4 +114,4 @@ Get `k1` ip :
 $ vagrant ssh -c "ip a | grep -A 3 eth0:" k1
 ```
 
-Connect to Dashboard with https://<ip-k1>:<exposed-port>
+Connect to Dashboard with `https://<ip-k1>:<exposed-port>`
