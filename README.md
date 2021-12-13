@@ -1,6 +1,6 @@
 # k8s_deploy
 
-Vagrantfile and scripts to deploy a k8s cluster.
+Vagrantfile, scripts and a yaml collection to deploy a k8s cluster.
 
 **Requirements :**
 * libvirt
