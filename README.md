@@ -16,7 +16,7 @@ This will deploy 3 CentOS 7 virtual machines :
 You will need 6GB of RAM (2GB per hosts) for the cluster. You can ajust that in
 the Vagrantfile (`domain.memory = 2048`).
 
-## How to use
+## How to use
 
 Clone this repository :
 ```
