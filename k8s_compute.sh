@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
 
-# Swap OFF
+# Swap OFF - https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/#before-you-begin
 
 swapoff -a
+sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
 
-#  module br_netfilter
+# Enable module br_netfilter - https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/#letting-iptables-see-bridged-traffic
 
 cat <<EOF | tee /etc/sysctl.d/k8s.conf
 net.bridge.bridge-nf-call-ip6tables = 1
 net.bridge.bridge-nf-call-iptables = 1
 EOF
-
 sysctl --system
 
-# Désactiver firewall
+# Disable firewall
 
 systemctl stop firewalld
 systemctl disable firewalld
@@ -38,7 +38,11 @@ EOF
 
 systemctl enable --now docker.service
 
-# Installation kubernetes
+# SELinux
+setenforce 0
+sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
+
+# Install kubernetes : kubelet kubeadm kubectl
 
 cat <<EOF | tee /etc/yum.repos.d/kubernetes.repo
 [kubernetes]
@@ -51,15 +55,11 @@ gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cl
 exclude=kubelet kubeadm kubectl
 EOF
 
-# Mettre SELinux en mode permissif (le désactiver efficacement)
-setenforce 0
-sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
-
 yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
 
 systemctl enable --now kubelet
 
-# Joindre le noeud au cluster
+# Join nodes to the cluster
 
 sleep 60
 kubeadm join --discovery-file /vagrant/admin.conf
