@@ -20,12 +20,12 @@ the Vagrantfile (`domain.memory = 2048`).
 
 Clone this repository :
 ```
-git clone https://github.com/OrioQuezac/k8s_deploy.git
+$ git clone https://github.com/OrioQuezac/k8s_deploy.git
 ```
 
 Run `vagrant up` in k8s_deploy directory :
 ```
-cd k8s_deploy
+$ cd k8s_deploy
 vagrant up
 ```
 
@@ -72,7 +72,7 @@ kube-system   kube-scheduler-k1            1/1     Running   0          13m
 
 Apply a StorageClass with yaml-collection/sc-slow.yaml :
 ```
-KUBECONFIG=admin.conf kubectl apply -f yaml-collection/sc-slow.yaml
+$ KUBECONFIG=admin.conf kubectl apply -f yaml-collection/sc-slow.yaml
 ```
 
 Create a directory for PersistentVolumes on each node :
@@ -96,3 +96,22 @@ data4-storage   10Gi       RWO            Delete           Available           s
 data5-storage   10Gi       RWO            Delete           Available           slow                    10s
 data6-storage   10Gi       RWO            Delete           Available           slow                    10s
 ```
+
+## Deploy Kubernetes Dashboard
+
+To deploy Kubernetes Dashboard :
+```
+KUBECONFIG=admin.conf kubectl apply -k yaml-collection/k8s_dashboard
+```
+
+You can expose port's pod with :
+```
+kubectl expose pod $(kubectl get pod -n kubernetes-dashboard --no-headers -o custom-columns=":metadata.name" | grep kubernetes-dashboard) -n kubernetes-dashboard --type=NodePort --name=kubernetes-ui
+```
+
+Get `k1` ip :
+```
+$ vagrant ssh -c "ip a | grep -A 3 eth0:" k1
+```
+
+Connect to Dashboard with https://<ip-k1>:<exposed-port>

@@ -1,0 +1,4 @@
+resources:
+- https://raw.githubusercontent.com/kubernetes/dashboard/master/aio/deploy/recommended.yaml
+- svc-account.yaml
+- ClusterRoleBinding.yaml
