@@ -82,7 +82,7 @@ $ for i in {1..3};do vagrant ssh -c 'sudo mkdir /mnt/data{1..6}' k$i; done
 
 Add PersistentVolumes with the template in yaml-collection/pv-data.yaml
 ```
-KUBECONFIG=admin.conf kubectl apply -f yaml-collection/pv-data.yaml
+$ KUBECONFIG=admin.conf kubectl apply -f yaml-collection/pv-data.yaml
 ```
 
 Check if PersistentVolumes are available :
@@ -101,12 +101,12 @@ data6-storage   10Gi       RWO            Delete           Available           s
 
 To deploy Kubernetes Dashboard :
 ```
-KUBECONFIG=admin.conf kubectl apply -k yaml-collection/k8s_dashboard
+$ KUBECONFIG=admin.conf kubectl apply -k yaml-collection/k8s_dashboard
 ```
 
 You can expose port's pod with :
 ```
-KUBECONFIG=admin.conf kubectl expose pod $(kubectl get pod -n kubernetes-dashboard --no-headers -o custom-columns=":metadata.name" | grep kubernetes-dashboard) -n kubernetes-dashboard --type=NodePort --name=kubernetes-ui
+$ KUBECONFIG=admin.conf kubectl expose pod $(kubectl get pod -n kubernetes-dashboard --no-headers -o custom-columns=":metadata.name" | grep kubernetes-dashboard) -n kubernetes-dashboard --type=NodePort --name=kubernetes-ui
 ```
 
 Get `k1` ip :
@@ -118,5 +118,5 @@ Connect to Dashboard with `https://<ip-k1>:<exposed-port>`
 
 Get token authentication :
 ```
-kubectl -n kubernetes-dashboard get secret $(kubectl -n kubernetes-dashboard get sa/admin-user -o jsonpath="{.secrets[0].name}") -o go-template="{{.data.token | base64decode}}"
+$ KUBECONFIG=admin.conf kubectl -n kubernetes-dashboard get secret $(kubectl -n kubernetes-dashboard get sa/admin-user -o jsonpath="{.secrets[0].name}") -o go-template="{{.data.token | base64decode}}"
 ```
