@@ -38,20 +38,20 @@ $ $ KUBECONFIG=admin.conf kubectl get nodes
 NAME             STATUS   ROLES                  AGE     VERSION
 kompute1         Ready    <none>                 43s     v1.23.1
 kompute2         Ready    <none>                 43s     v1.23.1
-kontrolplanes1   Ready    control-plane,master   2m19s   v1.23.1
-kontrolplanes2   Ready    control-plane,master   102s    v1.23.1
+kontrolplane1    Ready    control-plane,master   2m19s   v1.23.1
+kontrolplane2    Ready    control-plane,master   102s    v1.23.1
 ```
 
 or, connect to k1 :
 ```
-$ vagrant ssh kontrolplanes1
+$ vagrant ssh kontrolplane1
 Last login: Thu Dec 30 09:21:09 2021 from 192.168.121.1
-[vagrant@kontrolplanes1 ~]$ sudo KUBECONFIG=/etc/kubernetes/admin.conf kubectl get nodes
+[vagrant@kontrolplane1 ~]$ sudo KUBECONFIG=/etc/kubernetes/admin.conf kubectl get nodes
 NAME             STATUS   ROLES                  AGE     VERSION
 kompute1         Ready    <none>                 77s     v1.23.1
 kompute2         Ready    <none>                 77s     v1.23.1
-kontrolplanes1   Ready    control-plane,master   2m53s   v1.23.1
-kontrolplanes2   Ready    control-plane,master   2m16s   v1.23.1
+kontrolplane1    Ready    control-plane,master   2m53s   v1.23.1
+kontrolplane2    Ready    control-plane,master   2m16s   v1.23.1
 ```
 
 **Enjoy !**

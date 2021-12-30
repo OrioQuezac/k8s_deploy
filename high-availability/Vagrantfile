@@ -23,10 +23,10 @@ Vagrant.configure("2") do |config|
     # end
   end
 
-  (1..N).each do |kontrolplanes_host_cpt|
-		config.vm.define "kontrolplanes#{kontrolplanes_host_cpt}" do |host_config|
-			host_config.vm.hostname = "kontrolplanes#{kontrolplanes_host_cpt}"
-			host_config.vm.network "private_network", :ip => "10.0.0.1#{kontrolplanes_host_cpt}"
+  (1..N).each do |kontrolplane_host_cpt|
+		config.vm.define "kontrolplane#{kontrolplane_host_cpt}" do |host_config|
+			host_config.vm.hostname = "kontrolplane#{kontrolplane_host_cpt}"
+			host_config.vm.network "private_network", :ip => "10.0.0.1#{kontrolplane_host_cpt}"
 			host_config.vm.provider "libvirt" do |hv|
 				hv.cpus = 2
 				hv.memory = 2048
@@ -55,8 +55,8 @@ Vagrant.configure("2") do |config|
     ansible.playbook = "ansible/dummy.yml"
     ansible.groups = {
       "komputes" => ["kompute[1:#{N}]"],
-      "kontrolplanes" => ["kontrolplanes[1:#{N}]"],
-      "knodes" => ["kompute[1:#{N}]","kontrolplanes[1:#{N}]"]
+      "kontrolplanes" => ["kontrolplane[1:#{N}]"],
+      "knodes" => ["kompute[1:#{N}]","kontrolplane[1:#{N}]"]
     }
   end
 

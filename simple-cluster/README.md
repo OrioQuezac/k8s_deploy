@@ -1,9 +1,9 @@
 # Simple-Cluster
 
 This will deploy 3 CentOS 7 virtual machines :
-  * k1 : Control Pane
-  * k2 : Compute (node)
-  * k3 : Compute (node)
+  * kontrolplane1 : Control Plane
+  * kompute2 : Compute (node)
+  * kompute3 : Compute (node)
 
 You will need 6GB of RAM (2GB per hosts) for the cluster. You can ajust that in
 the Vagrantfile (`domain.memory = 2048`).
@@ -111,8 +111,6 @@ kubernetes-ui               NodePort    10.96.172.247    <none>        8443:3170
 ```
 
 Connect to Dashboard with `https://10.0.0.11:<exposed-port>` (Here, exposed port is 31707)
-
-Connect to Dashboard with `https://<ip-k1>:<exposed-port>`
 
 Get token authentication :
 ```

@@ -113,14 +113,14 @@
         name: kubelet
         enabled: yes
 
-- name: Init kontrolplanes1
+- name: Init kontrolplane1
   become: yes
   become_user: root
-  hosts: kontrolplanes1
+  hosts: kontrolplane1
   tasks:
 
     - name: Add kubeadm config
-      when: inventory_hostname == "kontrolplanes1"
+      when: inventory_hostname == "kontrolplane1"
       copy:
         dest: /tmp/kubeadm-config.yaml
         content: |
@@ -134,17 +134,17 @@
             - "10.0.0.10"
           controlPlaneEndpoint: "10.0.0.10:6443"
 
-    - name: Init kontrolplanes1
-      when: inventory_hostname == "kontrolplanes1"
+    - name: Init kontrolplane1
+      when: inventory_hostname == "kontrolplane1"
       shell: kubeadm init --config=/tmp/kubeadm-config.yaml
       ignore_errors: yes
 
     - name: Implement a networking model - flannel
-      when: inventory_hostname == "kontrolplanes1"
+      when: inventory_hostname == "kontrolplane1"
       shell: KUBECONFIG=/etc/kubernetes/admin.conf kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
 
     - name: Copy file with owner and permissions
-      when: inventory_hostname == "kontrolplanes1"
+      when: inventory_hostname == "kontrolplane1"
       ansible.builtin.copy:
         src: /etc/kubernetes/
         dest: /vagrant/kubernetes
@@ -156,13 +156,13 @@
   tasks:
 
     - name: Creates k8s PKI directory
-      when: inventory_hostname != "kontrolplanes1"
+      when: inventory_hostname != "kontrolplane1"
       file:
         path: /etc/kubernetes/pki/etcd
         state: directory
 
     - name: Your copy task
-      when: inventory_hostname != "kontrolplanes1"
+      when: inventory_hostname != "kontrolplane1"
       copy: src={{ item.src }} dest={{ item.dest }} remote_src=yes
       with_items:
         - { src: /vagrant/kubernetes/pki/ca.crt, dest: /etc/kubernetes/pki/ca.crt }
@@ -176,8 +176,8 @@
         - { src: /vagrant/kubernetes/admin.conf, dest: /etc/kubernetes/admin.conf }
 
 
-    - name: Init kontrolplanes2
-      when: inventory_hostname != "kontrolplanes1"
+    - name: Init kontrolplane2
+      when: inventory_hostname != "kontrolplane1"
       shell: kubeadm join --discovery-file /etc/kubernetes/admin.conf --control-plane
 
 - hosts: komputes
