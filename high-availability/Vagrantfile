@@ -17,10 +17,6 @@ Vagrant.configure("2") do |config|
   config.vm.define "haproxy" do |haproxy|
     haproxy.vm.hostname = "haproxy"
     haproxy.vm.network "private_network", :ip => "10.0.0.10"
-    # haproxy.vm.provider :libvirt do |domain|
-    #   domain.memory = 2048
-    #   domain.cpus = 2
-    # end
   end
 
   (1..N).each do |kontrolplane_host_cpt|
