@@ -1,0 +1,203 @@
+- name: Deploy HA Architekture
+  become: yes
+  become_user: root
+  hosts: haproxy
+  tasks:
+
+    - name: Install HAproxy
+      yum:
+        name: haproxy
+        state: present
+
+    - name: Copy file with owner and permissions
+      ansible.builtin.copy:
+        src: /vagrant/haproxy-k8s.cfg
+        dest: /etc/haproxy/haproxy.cfg
+        remote_src: yes
+
+    - name: Disabling firewalld
+      ansible.builtin.systemd:
+        state: stopped
+        name: firewalld
+        enabled: no
+
+    - name: Disable SELinux
+      shell: |
+        setenforce 0
+        sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
+
+    - name: Enabling haproxy
+      ansible.builtin.systemd:
+        state: started
+        name: haproxy
+        enabled: yes
+
+- name: Prepare all k8s Nodes
+  become: yes
+  become_user: root
+  hosts: knodes
+  tasks:
+
+    - name: Disable Swap
+      shell: |
+        swapoff -a
+        sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+
+    - name: Enable br_netfilter
+      copy:
+        dest: /etc/sysctl.d/k8s.conf
+        content: |
+          net.bridge.bridge-nf-call-ip6tables = 1
+          net.bridge.bridge-nf-call-iptables = 1
+
+    - name: Disabling firewalld
+      ansible.builtin.systemd:
+        state: stopped
+        name: firewalld
+        enabled: no
+
+    - name: Install yum-utils
+      yum:
+        name: yum-utils
+        state: present
+
+    - name: Add docker-ce repository
+      shell: yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+
+    - name: Install Docker
+      shell: yum install -y docker-ce-cli docker-ce containerd.io
+
+    - name: Creates Docker directory
+      file:
+        path: /etc/docker/
+        state: directory
+
+    - name: Change Docker cgroupdriver
+      copy:
+        dest: /etc/docker/daemon.json
+        content: |
+          {
+          "exec-opts": ["native.cgroupdriver=systemd"]
+          }
+
+    - name: Enable Docker
+      ansible.builtin.systemd:
+        state: started
+        name: docker
+        enabled: yes
+
+    - name: Disable SELinux
+      shell: |
+        setenforce 0
+        sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
+
+    - name: Enable br_netfilter
+      copy:
+        dest: /etc/yum.repos.d/kubernetes.repo
+        content: |
+          [kubernetes]
+          name=Kubernetes
+          baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-\$basearch
+          enabled=1
+          gpgcheck=1
+          repo_gpgcheck=1
+          gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+          exclude=kubelet kubeadm kubectl
+
+    - name: Install Kubernetes
+      shell: yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+
+    - name: Enable Kubernetes
+      ansible.builtin.systemd:
+        state: started
+        name: kubelet
+        enabled: yes
+
+- name: Init kontrolplane1
+  become: yes
+  become_user: root
+  hosts: kontrolplane1
+  tasks:
+
+    - name: Add kubeadm config
+      when: inventory_hostname == "kontrolplane1"
+      copy:
+        dest: /tmp/kubeadm-config.yaml
+        content: |
+          apiVersion: kubeadm.k8s.io/v1beta3
+          kind: ClusterConfiguration
+          kubernetesVersion: stable
+          networking:
+            podSubnet: "10.244.0.0/16" #  --pod-network-cidr=10.244.0.0/16
+          apiServer:
+            certSANs:
+            - "10.0.0.10"
+          controlPlaneEndpoint: "10.0.0.10:6443"
+
+    - name: Init kontrolplane1
+      when: inventory_hostname == "kontrolplane1"
+      shell: kubeadm init --config=/tmp/kubeadm-config.yaml
+      ignore_errors: yes
+
+    - name: Implement a networking model - flannel
+      when: inventory_hostname == "kontrolplane1"
+      shell: KUBECONFIG=/etc/kubernetes/admin.conf kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
+
+    - name: Copy file with owner and permissions
+      when: inventory_hostname == "kontrolplane1"
+      ansible.builtin.copy:
+        src: /etc/kubernetes/
+        dest: /vagrant/kubernetes
+        remote_src: yes
+
+- hosts: kontrolplanes
+  become: yes
+  become_user: root
+  tasks:
+
+    - name: Creates k8s PKI directory
+      when: inventory_hostname != "kontrolplane1"
+      file:
+        path: /etc/kubernetes/pki/etcd
+        state: directory
+
+    - name: Your copy task
+      when: inventory_hostname != "kontrolplane1"
+      copy: src={{ item.src }} dest={{ item.dest }} remote_src=yes
+      with_items:
+        - { src: /vagrant/kubernetes/pki/ca.crt, dest: /etc/kubernetes/pki/ca.crt }
+        - { src: /vagrant/kubernetes/pki/ca.key, dest: /etc/kubernetes/pki/ca.key }
+        - { src: /vagrant/kubernetes/pki/sa.key, dest: /etc/kubernetes/pki/sa.key }
+        - { src: /vagrant/kubernetes/pki/sa.pub, dest: /etc/kubernetes/pki/sa.pub }
+        - { src: /vagrant/kubernetes/pki/front-proxy-ca.crt, dest: /etc/kubernetes/pki/front-proxy-ca.crt }
+        - { src: /vagrant/kubernetes/pki/front-proxy-ca.key, dest: /etc/kubernetes/pki/front-proxy-ca.key }
+        - { src: /vagrant/kubernetes/pki/etcd/ca.crt, dest: /etc/kubernetes/pki/etcd/ca.crt }
+        - { src: /vagrant/kubernetes/pki/etcd/ca.key, dest: /etc/kubernetes/pki/etcd/ca.key }
+        - { src: /vagrant/kubernetes/admin.conf, dest: /etc/kubernetes/admin.conf }
+
+
+    - name: Init kontrolplane2
+      when: inventory_hostname != "kontrolplane1"
+      shell: kubeadm join --discovery-file /etc/kubernetes/admin.conf --control-plane
+
+- hosts: komputes
+  become: yes
+  become_user: root
+  tasks:
+
+    - name: Init komputes
+      shell: kubeadm join --discovery-file /vagrant/kubernetes/admin.conf
+      ignore_errors: yes
+
+    - name: Copy admin.conf
+      run_once: yes
+      copy:
+        src: /vagrant/kubernetes/admin.conf
+        dest: /vagrant/admin.conf
+        remote_src: yes
+
+    - name: Delete kubernetes directory
+      run_once: yes
+      file:
+        path: /vagrant/kubernetes
+        state: absent

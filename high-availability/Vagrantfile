@@ -1,0 +1,61 @@
+$msg = <<MSG
+------------------------------------------------------
+Run the playbook with this command :
+
+PYTHONUNBUFFERED=1 ANSIBLE_FORCE_COLOR=true ANSIBLE_HOST_KEY_CHECKING=false ANSIBLE_SSH_ARGS='-o UserKnownHostsFile=/dev/null -o IdentitiesOnly=yes -o ControlMaster=auto -o ControlPersist=60s' ansible-playbook --connection=ssh --timeout=30 --inventory-file=.vagrant/provisioners/ansible/inventory -v ansible/playbook.yml
+
+------------------------------------------------------
+MSG
+
+Vagrant.configure("2") do |config|
+
+  N = 2
+
+  config.vm.box = "generic/centos7"
+  config.vm.synced_folder ".", "/vagrant", type: "nfs"
+
+  config.vm.define "haproxy" do |haproxy|
+    haproxy.vm.hostname = "haproxy"
+    haproxy.vm.network "private_network", :ip => "10.0.0.10"
+  end
+
+  (1..N).each do |kontrolplane_host_cpt|
+		config.vm.define "kontrolplane#{kontrolplane_host_cpt}" do |host_config|
+			host_config.vm.hostname = "kontrolplane#{kontrolplane_host_cpt}"
+			host_config.vm.network "private_network", :ip => "10.0.0.1#{kontrolplane_host_cpt}"
+			host_config.vm.provider "libvirt" do |hv|
+				hv.cpus = 2
+				hv.memory = 2048
+			end
+    end
+	end
+
+  (1..N).each do |kompute_host_cpt|
+		config.vm.define "kompute#{kompute_host_cpt}" do |host_config|
+			host_config.vm.hostname = "kompute#{kompute_host_cpt}"
+			host_config.vm.network "private_network", :ip => "10.0.0.2#{kompute_host_cpt}"
+			host_config.vm.provider "libvirt" do |hv|
+				hv.cpus = 2
+				hv.memory = 2048
+			end
+    end
+	end
+
+################################
+# Some Ansible Stuff
+################################
+
+
+  config.vm.provision "ansible" do |ansible|
+    ansible.verbose = "v"
+    ansible.playbook = "ansible/dummy.yml"
+    ansible.groups = {
+      "komputes" => ["kompute[1:#{N}]"],
+      "kontrolplanes" => ["kontrolplane[1:#{N}]"],
+      "knodes" => ["kompute[1:#{N}]","kontrolplane[1:#{N}]"]
+    }
+  end
+
+  config.vm.post_up_message = $msg
+
+end
